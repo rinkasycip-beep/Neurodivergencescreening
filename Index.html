@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neurodivergence Screening</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --cream: #f7f4ef;
+    --warm: #e8e0d4;
+    --sage: #7a9e87;
+    --sage-light: #a8c4b0;
+    --gold: #c4924a;
+    --gold-light: #e8c48a;
+    --muted: #8a8070;
+    --card: #ffffff;
+    --border: #ddd8ce;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 48px 32px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(196,146,74,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(122,158,135,0.15) 0%, transparent 50%);
+  }
+  .header-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .header h1 em { font-style: italic; color: var(--gold-light); }
+  .header p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(247,244,239,0.75);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--ink);
+    padding: 0 32px 24px;
+  }
+  .progress-inner { max-width: 680px; margin: 0 auto; }
+  .progress-bar-track {
+    height: 3px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sage), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    color: rgba(247,244,239,0.45);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    margin-top: 36px;
+  }
+  .section-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 24px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .q-card.answered { border-color: var(--sage-light); }
+
+  .q-text {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+
+  /* ── SCALE ── */
+  .scale-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+    padding: 0 2px;
+  }
+  .scale-options {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .scale-options label {
+    flex: 1;
+    cursor: pointer;
+  }
+  .scale-options input[type="radio"] { display: none; }
+  .scale-options .pip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--cream);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .scale-options input:checked + .pip {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--cream);
+  }
+  .scale-options label:hover .pip {
+    border-color: var(--sage);
+    color: var(--sage);
+  }
+  .scale-options input:checked + .pip:hover {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  /* ── INFO BLOCK ── */
+  .info-block {
+    background: linear-gradient(135deg, rgba(122,158,135,0.08), rgba(196,146,74,0.05));
+    border: 1px solid rgba(122,158,135,0.25);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+  .info-block strong { color: var(--ink); }
+
+  /* ── SUBMIT BUTTON ── */
+  .submit-wrap { margin-top: 28px; text-align: center; }
+  .btn-submit {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 48px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-submit:hover { background: #2d2d4a; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.45; cursor: default; }
+  .btn-submit svg { width: 18px; height: 18px; }
+  .error-msg {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* ── GATE SCREEN ── */
+  #gate-screen {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .gate-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .gate-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--sage-light), var(--sage));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+  }
+  .gate-icon svg { width: 30px; height: 30px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .gate-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .gate-card h2 em { font-style: italic; color: var(--gold); }
+  .gate-card .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 28px;
+  }
+
+  /* score cards */
+  .score-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .score-category {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .score-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .score-bar-bg {
+    height: 8px;
+    background: var(--warm);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .score-bar-fill.autism { background: var(--sage); }
+  .score-bar-fill.adhd  { background: var(--gold); }
+  .score-bar-fill.audhd { background: linear-gradient(90deg, var(--sage), var(--gold)); }
+  .score-interpretation {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .book-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .book-section p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+
+  .btn-book {
+    background: linear-gradient(135deg, var(--sage), #5d8a6e);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 40px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 4px 20px rgba(122,158,135,0.35);
+  }
+  .btn-book:hover { opacity: 0.9; }
+  .btn-book:active { transform: scale(0.98); }
+  .btn-book svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  .trust-line {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  /* ── INTAKE SCREEN ── */
+  #intake-screen {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .intake-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    margin-top: 8px;
+  }
+  .intake-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .intake-card h2 em { font-style: italic; color: var(--gold); }
+  .intake-card .intake-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+  .field-group { margin-bottom: 18px; }
+  .field-group label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .field-group input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus { border-color: var(--sage); background: #fff; }
+  .field-group input::placeholder { color: var(--muted); opacity: 0.6; }
+  .intake-error {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+  .intake-submit-wrap { margin-top: 24px; }
+  .sending-msg {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .header { padding: 36px 20px 32px; }
+    .main { padding: 24px 14px 48px; }
+    .q-card { padding: 18px 16px 16px; }
+    .gate-card { padding: 28px 20px; }
+    .scale-options { gap: 4px; }
+    .scale-options .pip { height: 34px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-inner">
+    <div class="eyebrow">Neurodivergence Screening</div>
+    <h1>How does your nervous system <em>actually</em> experience the world?</h1>
+    <p>This is not a diagnosis. It's a self-awareness tool — a first look at internal patterns that often go unrecognized. 24 questions, about 5 minutes.</p>
+  </div>
+</div>
+
+<!-- ── PROGRESS BAR ── -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-text">0 of 24 answered</span>
+      <span id="progress-pct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── FORM ── -->
+<div class="main">
+  <div id="form-screen">
+
+    <div class="info-block">
+      <strong>How to answer:</strong> For each statement, choose how often it feels true for you — from <strong>0 (Never)</strong> to <strong>7 (Always)</strong>. Answer based on your <em>internal</em> experience, not how you appear to others.
+    </div>
+
+    <!-- SECTION A: Masking & Social Navigation -->
+    <div class="section-label"><span class="dot"></span> Social & Masking Patterns</div>
+
+    <div class="q-card" data-q="1">
+      <div class="q-text">I often rehearse conversations in my head before they happen to make sure I respond the right way.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q1"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="2">
+      <div class="q-text">After social interactions, I feel mentally drained — even when things seemed to go fine on the outside.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q2"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="3">
+      <div class="q-text">Sometimes I notice I've picked up someone else's tone, gestures, or expressions without meaning to.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q3"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="5">
+      <div class="q-text">I often replay conversations afterward, trying to figure out if I missed something or said the wrong thing.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q5"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="6">
+      <div class="q-text">In social situations, I feel like I'm playing a part rather than being myself.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q6"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Focused Interests (Autism) -->
+    <div class="section-label"><span class="dot"></span> Focused Interests</div>
+
+    <div class="q-card" data-q="26">
+      <div class="q-text">I have one or two specific interests or topics I return to again and again with deep focus — while most other things feel much less interesting.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q26"></div>
+      </div>
+    </div>
+
+    <!-- SECTION B: Sensory Experience -->
+    <div class="section-label"><span class="dot" style="background:var(--gold)"></span> Sensory Experience</div>
+
+    <div class="q-card" data-q="4">
+      <div class="q-text">Sensory things — like bright lights, background noise, or certain textures — bother me internally, even when I don't show it.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q4"></div>
+      </div>
+    </div>
+
+    <!-- SECTION C: Attention & Executive Function -->
+    <div class="section-label"><span class="dot" style="background:#9b7fb8"></span> Attention & Focus</div>
+
+    <div class="q-card" data-q="8">
+      <div class="q-text">My mind drifts during tasks — even ones I actually care about.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q8"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="9">
+      <div class="q-text">Starting tasks feels harder than it should — even when I know they matter.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q9"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="10">
+      <div class="q-text">There's often a restless or racing quality to my thoughts, even when I look calm on the outside.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q10"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="11">
+      <div class="q-text">I forget small things — appointments, replies, details — more than I'd like.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q11"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="12">
+      <div class="q-text">Planning and organizing feel chaotic inside my head, even for simple things.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q12"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="13">
+      <div class="q-text">My emotions shift quickly and intensely on the inside, even when nothing shows on the outside.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q13"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="14">
+      <div class="q-text">I zone out in conversations or meetings and miss things, even when I'm trying to stay present.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q14"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="15">
+      <div class="q-text">I start things with good intentions but often drift to something else before I finish.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q15"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Interests & Novelty (ADHD) -->
+    <div class="section-label"><span class="dot" style="background:#9b7fb8"></span> Interests & Novelty</div>
+
+    <div class="q-card" data-q="27">
+      <div class="q-text">I get excited about new hobbies and dive in fully — but most of them fade, with only one or two ever lasting.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q27"></div>
+      </div>
+    </div>
+
+    <!-- SECTION D: Complex Paradoxical Patterns (AuDHD) -->
+    <div class="section-label"><span class="dot" style="background:#b07a9e"></span> Paradoxical Experiences</div>
+
+    <div class="q-card" data-q="17">
+      <div class="q-text">I get pulled toward new things and change — but when my routines actually shift, it throws me off more than I expect.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q17"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="18">
+      <div class="q-text">I can lock in on something that interests me for hours — but struggle to give the same focus to ordinary tasks.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q18"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="19">
+      <div class="q-text">Some days sensory input overwhelms me; other days I find myself seeking out more noise, movement, or stimulation.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q19"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="20">
+      <div class="q-text">I sometimes say or do things before thinking, then spend time afterward wondering if it landed wrong.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q20"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="21">
+      <div class="q-text">I work best with structure and routine — but my own thoughts often make it hard to stick to them.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q21"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="22">
+      <div class="q-text">I feel things strongly on the inside but keep it contained — not wanting to seem too much or too intense.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q22"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="23">
+      <div class="q-text">Even when I'm trying to connect, I often feel like I'm not quite landing — like others aren't fully getting me.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q23"></div>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="24">
+      <div class="q-text">Certain routines or rituals feel essential to me — disrupting them creates more inner discomfort than seems reasonable.</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Never</span><span>Always</span></div>
+        <div class="scale-options" id="q24"></div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <button class="btn-submit" id="submit-btn" onclick="handleSubmit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        See my results
+      </button>
+      <div class="error-msg" id="error-msg">Please answer all 24 questions before continuing.</div>
+    </div>
+
+  </div><!-- /form-screen -->
+
+  <!-- ── INTAKE SCREEN ── -->
+  <div id="intake-screen">
+    <div class="intake-card">
+      <h2>Almost there — <em>one last step</em></h2>
+      <p class="intake-sub">Your results are ready. Enter your name and email so your coach can review your scores before your session.</p>
+
+      <div class="field-group">
+        <label for="intake-name">Your name</label>
+        <input type="text" id="intake-name" placeholder="First and last name" autocomplete="name" />
+      </div>
+      <div class="field-group">
+        <label for="intake-email">Email address</label>
+        <input type="email" id="intake-email" placeholder="you@email.com" autocomplete="email" />
+      </div>
+
+      <div class="intake-submit-wrap">
+        <button class="btn-submit" id="intake-btn" onclick="handleIntake()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          See my results
+        </button>
+        <div class="intake-error" id="intake-error">Please enter your name and a valid email.</div>
+        <div class="sending-msg" id="sending-msg">Sending your results…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS SCREEN ── -->
+  <div id="gate-screen">
+    <div class="gate-card">
+      <div class="gate-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h2>Your responses have been <em>received</em></h2>
+      <p class="subtitle">Thank you for taking the time to reflect. Your results have been sent to the practitioner, who will be in touch to walk you through what the patterns mean for you.</p>
+
+      <hr class="divider">
+
+      <div class="book-section">
+        <p>If you'd like to understand what your results mean for you, book a session with the practitioner.</p>
+        <a class="btn-book" href="https://tidycal.com/rinkasycip" target="_blank">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Book a session to understand your results
+        </a>
+        <div class="trust-line">This is a self-awareness tool, not a clinical diagnosis.</div>
+      </div>
+    </div>
+  </div><!-- /results-screen -->
+
+</div><!-- /main -->
+
+<script>
+  // ── Build scale options 0-7 ──
+  const questions = [1,2,3,4,5,6,8,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,26,27];
+  const TOTAL = questions.length; // 24
+  const answers = {};
+
+  questions.forEach(q => {
+    const wrap = document.getElementById('q' + q);
+    if (!wrap) return;
+    for (let v = 0; v <= 7; v++) {
+      const lbl = document.createElement('label');
+      const inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'q' + q;
+      inp.value = v;
+      inp.addEventListener('change', () => {
+        answers[q] = v;
+        const card = wrap.closest('.q-card');
+        card.classList.add('answered');
+        updateProgress();
+      });
+      const pip = document.createElement('span');
+      pip.className = 'pip';
+      pip.textContent = v;
+      lbl.appendChild(inp);
+      lbl.appendChild(pip);
+      wrap.appendChild(lbl);
+    }
+  });
+
+  // ── Progress ──
+  function updateProgress() {
+    const done = Object.keys(answers).length;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = done + ' of ' + TOTAL + ' answered';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  // ── Scoring — exact weighted formulas ──
+  //
+  // AUTISM:  1.5*(Q1 + Q3 + Q5) + 1.2*(Q2 + Q4 + Q6) + 1.1*(Q6) + 1.0*(Q26)
+  //   → D=Q1(1.5), F=Q3(1.5), J=Q5(1.5)
+  //   → E=Q2(1.2), G=Q4(1.2), I+K=Q6(avg 1.1)
+  //   → H=Q26(1.0)  ← new: intense private interests
+  //   Max: 1.5*3*7 + 1.2*2*7 + 1.1*7 + 1.0*7 = 31.5+16.8+7.7+7 = 63.0
+  //   (Original max 66.5 included a separate sensory Q; 63.0 is our adjusted ceiling)
+  //
+  // ADHD:    1.5*(Q8 + Q10 + Q12 + Q14) + 1.2*(Q9 + Q11 + Q15) + 1.0*(Q13)
+  //   → M=Q8(1.5), O=Q10(1.5), Q=Q12(1.5), S=Q14(1.5)
+  //   → N=Q9(1.2), P=Q11(1.2), T=Q15(1.2)
+  //   → R=Q13(1.0)
+  //   Max: 1.5*4*7 + 1.2*3*7 + 1.0*7 = 42+25.2+7 = 74.2 → scaled to 38
+  //
+  // AuDHD:   1.5*(Q17 + Q18 + Q21 + Q24) + 1.2*(Q19 + Q20 + Q22) + 1.0*(Q23)
+  //   → V=Q17(1.5), W=Q18(1.5), Z=Q21(1.5), AC=Q24(1.5)
+  //   → X=Q19(1.2), Y=Q20(1.2), AA=Q22(1.2)
+  //   → AB=Q23(1.0)
+  //   Max: 1.5*4*7 + 1.2*3*7 + 1.0*7 = 42+25.2+7 = 74.2 → scaled to 66.5
+
+  const AUTISM_MAX = 63.0;
+  const ADHD_MAX   = 38.0;
+  const AUDHD_MAX  = 66.5;
+
+  // Scale factors to match your original Excel ceilings
+  const ADHD_SCALE  = 38   / (1.5*4*7 + 1.2*4*7 + 1.0*7); // 38/81.9
+  const AUDHD_SCALE = 66.5 / (1.5*4*7 + 1.2*3*7 + 1.0*7); // 66.5/74.2
+
+  function getLabel(score, type) {
+    if (type === 'autism' || type === 'audhd') {
+      if (score >= 40) return 'Strong pattern';
+      if (score >= 25) return 'Moderate indicators';
+      return 'Low indicators';
+    }
+    if (type === 'adhd') {
+      if (score >= 22) return 'Strong pattern';
+      if (score >= 12) return 'Some indicators';
+      return 'Low indicators';
+    }
+  }
+
+  function computeScores() {
+    const g = q => (answers[q] !== undefined ? parseInt(answers[q]) : 0);
+
+    const autismRaw = 1.5*(g(1)+g(3)+g(5)) + 1.2*(g(2)+g(4)) + 1.1*g(6) + 1.0*g(26);
+    const adhdRaw   = (1.5*(g(8)+g(10)+g(12)+g(14)) + 1.2*(g(9)+g(11)+g(15)+g(27)) + 1.0*g(13)) * ADHD_SCALE;
+    const audhdRaw  = (1.5*(g(17)+g(18)+g(21)+g(24)) + 1.2*(g(19)+g(20)+g(22)) + 1.0*g(23)) * AUDHD_SCALE;
+
+    const autism = Math.round(autismRaw * 10) / 10;
+    const adhd   = Math.round(adhdRaw   * 10) / 10;
+    const audhd  = Math.round(audhdRaw  * 10) / 10;
+
+    return {
+      autism: { score: autism, max: AUTISM_MAX, pct: autism / AUTISM_MAX * 100 },
+      adhd:   { score: adhd,   max: ADHD_MAX,   pct: adhd   / ADHD_MAX   * 100 },
+      audhd:  { score: audhd,  max: AUDHD_MAX,  pct: audhd  / AUDHD_MAX  * 100 }
+    };
+  }
+
+  // ── FORMSPREE ENDPOINT ──
+  // Replace with your endpoint from formspree.io/f/xxxxxxxx
+  const FORMSPREE_URL = 'https://formspree.io/f/xwvwoell';
+
+  // ── Submit (questions → intake screen) ──
+  function handleSubmit() {
+    if (Object.keys(answers).length < TOTAL) {
+      document.getElementById('error-msg').style.display = 'block';
+      for (const q of questions) {
+        if (answers[q] === undefined) {
+          document.querySelector('[data-q="'+q+'"]').scrollIntoView({behavior:'smooth', block:'center'});
+          break;
+        }
+      }
+      return;
+    }
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('intake-screen').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  // ── Intake submit (contact info → Formspree → gate screen) ──
+  async function handleIntake() {
+    const name  = document.getElementById('intake-name').value.trim();
+    const email = document.getElementById('intake-email').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!name || !emailOk) {
+      document.getElementById('intake-error').style.display = 'block';
+      return;
+    }
+    document.getElementById('intake-error').style.display = 'none';
+
+    const scores = computeScores();
+    const autismLabel = getLabel(scores.autism.score, 'autism');
+    const adhdLabel   = getLabel(scores.adhd.score,   'adhd');
+    const audhdLabel  = getLabel(scores.audhd.score,  'audhd');
+
+    document.getElementById('intake-btn').disabled = true;
+    document.getElementById('sending-msg').style.display = 'block';
+
+    // Build a hidden form and submit to Formspree via iframe (works locally + any host)
+    const iframe = document.createElement('iframe');
+    iframe.name = '_formspree_target';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method  = 'POST';
+    form.action  = FORMSPREE_URL;
+    form.target  = '_formspree_target';
+    form.style.display = 'none';
+
+    const fields = {
+      name,
+      email,
+      _replyto:     email,
+      _to:          'rinka.sycip@gmail.com',
+      _subject:     `Screening results — ${name}`,
+      autism_score: `${scores.autism.score} / ${AUTISM_MAX} — ${autismLabel}`,
+      adhd_score:   `${scores.adhd.score} / ${ADHD_MAX} — ${adhdLabel}`,
+      audhd_score:  `${scores.audhd.score} / ${AUDHD_MAX} — ${audhdLabel}`,
+    };
+
+    Object.entries(fields).forEach(([k, v]) => {
+      const inp = document.createElement('input');
+      inp.type  = 'hidden';
+      inp.name  = k;
+      inp.value = v;
+      form.appendChild(inp);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // Show confirmation screen
+    document.getElementById('intake-screen').style.display = 'none';
+    document.getElementById('gate-screen').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+</script>
+</body>
+</html>
